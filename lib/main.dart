@@ -26,11 +26,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Hyphn',
-      initialRoute: '/',
-      routes: {
-        '/': (context) => const Splashscreen(),
-        '/home': (context) => const Home(),
-      },
+      debugShowCheckedModeBanner: false,
+      
+       home: const Splashscreen(), // ✅ Use Splashscreen as the home
     );
   }
 }

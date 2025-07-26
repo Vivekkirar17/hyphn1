@@ -13,7 +13,7 @@ class SplashscreenState extends State<Splashscreen> {
   @override
   void initState() {
     super.initState();
-    Timer(Duration(seconds: 8), () {
+    Timer(Duration(seconds: 2), () {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (_) => Home()),
       );
@@ -23,14 +23,25 @@ class SplashscreenState extends State<Splashscreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SizedBox.expand(
-        child: Image.asset(
-          'assets/a.jpg',
-          fit: BoxFit.cover, // or BoxFit.fill if you want exact screen filling
-          errorBuilder: (context, error, stackTrace) {
-            return Center(child: Text('Image not found!', style: TextStyle(color: Colors.red)));
-          },
-        ),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return SizedBox(
+            width: constraints.maxWidth,
+            height: constraints.maxHeight,
+            child: Image.asset(
+              'assets/a.png',
+              fit: BoxFit.cover, // scales image to fill entire screen
+              errorBuilder: (context, error, stackTrace) {
+                return Center(
+                  child: Text(
+                    'Image not found!',
+                    style: TextStyle(color: Colors.red, fontSize: 18),
+                  ),
+                );
+              },
+            ),
+          );
+        },
       ),
     );
   }
