@@ -7,7 +7,7 @@ class BannerSlider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<String> bannerImages = [
-      'assets/banner/b.jpg',
+      'assets/banner/b.png',
       'assets/banner/a.png',
       'assets/banner/c.png',
     ];

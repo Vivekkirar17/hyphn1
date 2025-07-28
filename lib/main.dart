@@ -15,6 +15,8 @@ void main() async {
       appId: "1:1050583389856:web:4eb13dcdbacc35f5b0dbc5",
     ),
   );
+   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
 
   runApp(const MyApp());
 }
