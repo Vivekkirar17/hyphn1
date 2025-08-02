@@ -15,7 +15,7 @@ class SplashscreenState extends State<Splashscreen> {
     super.initState();
     Timer(Duration(seconds: 2), () {
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => Home()),
+        MaterialPageRoute(builder: (_) => const Home()),
       );
     });
   }
@@ -30,9 +30,9 @@ class SplashscreenState extends State<Splashscreen> {
             height: constraints.maxHeight,
             child: Image.asset(
               'assets/a.png',
-              fit: BoxFit.cover, // scales image to fill entire screen
+              fit: BoxFit.cover,
               errorBuilder: (context, error, stackTrace) {
-                return Center(
+                return const Center(
                   child: Text(
                     'Image not found!',
                     style: TextStyle(color: Colors.red, fontSize: 18),

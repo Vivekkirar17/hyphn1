@@ -1,58 +1,110 @@
-import 'package:flutter/material.dart';
 import 'dart:ui';
-import 'package:hyphn/pages/global_variable.dart';
+import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 import 'cart_page.dart';
 import 'banner_slider.dart';
 import 'product_details.dart';
+import 'package:hyphn/auth/login_page.dart';
+import 'global_variable.dart';
 
 class Home extends StatelessWidget {
   const Home({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+
     return Scaffold(
       drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            const UserAccountsDrawerHeader(
-              accountName: Text("Ashok Kirar"),
-              accountEmail: Text("ashok@example.com"),
-              currentAccountPicture: CircleAvatar(
-                backgroundColor: Colors.white,
-                child: Icon(Icons.person, size: 40),
+        child: user == null
+            ? ListView(
+                padding: EdgeInsets.zero,
+                children: [
+                  const UserAccountsDrawerHeader(
+                    accountName: Text("Guest"),
+                    accountEmail: Text("Not logged in"),
+                    currentAccountPicture: CircleAvatar(
+                      backgroundColor: Colors.white,
+                      child: Icon(Icons.person, size: 40),
+                    ),
+                    decoration: BoxDecoration(color: Colors.black),
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.login),
+                    title: const Text("Login"),
+                    onTap: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (_) => const LoginPage()),
+                      );
+                    },
+                  ),
+                ],
+              )
+            : FutureBuilder<DocumentSnapshot>(
+                future: FirebaseFirestore.instance
+                    .collection('users')
+                    .doc(user.uid)
+                    .get(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  if (!snapshot.hasData || !snapshot.data!.exists) {
+                    return const Center(child: Text("No user data found"));
+                  }
+
+                  final userData =
+                      snapshot.data!.data() as Map<String, dynamic>;
+
+                  return ListView(
+                    padding: EdgeInsets.zero,
+                    children: [
+                      UserAccountsDrawerHeader(
+                        accountName: Text(userData['name'] ?? 'User'),
+                        accountEmail: Text(userData['email'] ?? ''),
+                        currentAccountPicture: const CircleAvatar(
+                          backgroundColor: Colors.white,
+                          child: Icon(Icons.person, size: 40),
+                        ),
+                        decoration: const BoxDecoration(color: Colors.black),
+                      ),
+                      ListTile(
+                        leading: const Icon(Icons.phone),
+                        title: Text("Phone: ${userData['phone'] ?? ''}"),
+                        onTap: () {},
+                      ),
+                      ListTile(
+                        leading: const Icon(Icons.logout),
+                        title: const Text("Logout"),
+                        onTap: () async {
+                          await FirebaseAuth.instance.signOut();
+                          Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => const LoginPage()),
+                            (route) => false,
+                          );
+                        },
+                      ),
+                    ],
+                  );
+                },
               ),
-              decoration: BoxDecoration(color: Colors.black),
-            ),
-            ListTile(
-              leading: const Icon(Icons.person),
-              title: const Text("Profile"),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: const Icon(Icons.settings),
-              title: const Text("Settings"),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: const Icon(Icons.logout),
-              title: const Text("Logout"),
-              onTap: () {},
-            ),
-          ],
-        ),
       ),
       appBar: AppBar(
         leading: Builder(
           builder: (context) => IconButton(
-            onPressed: () {
-              Scaffold.of(context).openDrawer();
-            },
+            onPressed: () => Scaffold.of(context).openDrawer(),
             icon: const Icon(Icons.account_circle),
           ),
         ),
         title: const Center(
-          child: Text("Hyphn", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 34)),
+          child: Text("Hyphn",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 34)),
         ),
         actions: [
           IconButton(
@@ -66,14 +118,11 @@ class Home extends StatelessWidget {
       ),
       body: Stack(
         children: [
-          // Background Banner
           SizedBox(
             height: MediaQuery.of(context).size.height * 0.7,
             width: double.infinity,
             child: const BannerSlider(),
           ),
-
-          // Blur effect on bottom of banner
           Positioned(
             bottom: 0,
             left: 0,
@@ -97,8 +146,6 @@ class Home extends StatelessWidget {
               ),
             ),
           ),
-
-          // Foreground scrollable content
           SingleChildScrollView(
             child: Column(
               children: [
@@ -108,7 +155,8 @@ class Home extends StatelessWidget {
                   child: Center(
                     child: Text(
                       "Products",
-                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
@@ -118,7 +166,8 @@ class Home extends StatelessWidget {
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: products.length,
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       mainAxisSpacing: 12,
                       crossAxisSpacing: 12,
@@ -131,7 +180,8 @@ class Home extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => ProductDetailsPage(product: product),
+                              builder: (_) =>
+                                  ProductDetailsPage(product: product),
                             ),
                           );
                         },
@@ -153,7 +203,8 @@ class Home extends StatelessWidget {
                                     product['image'] ?? '',
                                     fit: BoxFit.cover,
                                     errorBuilder: (context, error, stackTrace) {
-                                      return const Icon(Icons.image_not_supported_outlined);
+                                      return const Icon(Icons
+                                          .image_not_supported_outlined);
                                     },
                                   ),
                                 ),
@@ -174,16 +225,21 @@ class Home extends StatelessWidget {
                                     ),
                                     Text(
                                       product['price'] ?? '',
-                                      style: TextStyle(color: Colors.grey[700], fontSize: 12),
+                                      style: TextStyle(
+                                          color: Colors.grey[700],
+                                          fontSize: 12),
                                     ),
                                     IconButton(
-                                      icon: const Icon(Icons.add_shopping_cart),
+                                      icon:
+                                          const Icon(Icons.add_shopping_cart),
                                       iconSize: 20,
                                       onPressed: () {
                                         cartItems.add(product);
-                                        ScaffoldMessenger.of(context).showSnackBar(
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
                                           SnackBar(
-                                            content: Text('${product['name']} added to cart!'),
+                                            content: Text(
+                                                '${product['name']} added to cart!'),
                                           ),
                                         );
                                       },
