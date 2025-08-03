@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'checkout_page.dart';
 import 'global_variable.dart';
+import 'package:hyphn/main_scafflod.dart';
 
 class CartPage extends StatefulWidget {
   const CartPage({Key? key}) : super(key: key);
@@ -18,8 +19,8 @@ class _CartPageState extends State<CartPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Cart")),
+    return MainScaffold(
+      
       body: cartItems.isEmpty
           ? const Center(child: Text("🛒 Your cart is empty"))
           : Column(

@@ -25,6 +25,12 @@ final products = [
       "price": "499",
         "description": "Over-ear headphones with deep bass and noise cancellation.",
     },
+    {
+      "name": "Bluetooth Speaker",
+      "image": "assets/image/f.png", // Add this image to your assets
+      "price": "499",
+        "description": "Over-ear headphones with deep bass and noise cancellation.",
+    },
   ];
   List<Map<String, String>> cartItems = [];
 ValueNotifier<int> cartCount = ValueNotifier<int>(0);

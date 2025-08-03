@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:hyphn/pages/home.dart';
 import 'package:hyphn/splashscreen/splashscreen.dart';
-import 'notification_service.dart'; // 👈 create this file next
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,7 +19,7 @@ void main() async {
   );
 
   // 🔔 Initialize Push Notification Service
-  await NotificationService().init();
+  
 
   runApp(const MyApp());
 }
