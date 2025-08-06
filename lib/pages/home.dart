@@ -18,7 +18,6 @@ class Home extends StatelessWidget {
     final isAdmin = user?.email == 'admin@hyphn.com';
 
     return MainScaffold(
-   
       body: LayoutBuilder(
         builder: (context, constraints) {
           int crossAxisCount = 2;
@@ -63,11 +62,17 @@ class Home extends StatelessWidget {
                   children: [
                     SizedBox(height: MediaQuery.of(context).size.height * 0.65),
                     const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16.0,
+                        vertical: 8,
+                      ),
                       child: Center(
                         child: Text(
                           "Products",
-                          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
@@ -90,7 +95,9 @@ class Home extends StatelessWidget {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) => ProductDetailsPage(product: product),
+                                  builder:
+                                      (_) =>
+                                          ProductDetailsPage(product: product),
                                 ),
                               );
                             },
@@ -111,8 +118,14 @@ class Home extends StatelessWidget {
                                       child: Image.asset(
                                         product['image'] ?? '',
                                         fit: BoxFit.cover,
-                                        errorBuilder: (context, error, stackTrace) {
-                                          return const Icon(Icons.image_not_supported_outlined);
+                                        errorBuilder: (
+                                          context,
+                                          error,
+                                          stackTrace,
+                                        ) {
+                                          return const Icon(
+                                            Icons.image_not_supported_outlined,
+                                          );
                                         },
                                       ),
                                     ),
@@ -124,21 +137,35 @@ class Home extends StatelessWidget {
                                       children: [
                                         Text(
                                           product['name'] ?? '',
-                                          style: const TextStyle(fontWeight: FontWeight.bold),
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
                                         ),
                                         Text(
                                           product['price'] ?? '',
-                                          style: TextStyle(color: Colors.grey[700]),
+                                          style: TextStyle(
+                                            color: Colors.grey[700],
+                                          ),
                                         ),
                                         IconButton(
-                                          icon: const Icon(Icons.add_shopping_cart),
+                                          icon: const Icon(
+                                            Icons.add_shopping_cart,
+                                          ),
                                           iconSize: 20,
                                           onPressed: () {
                                             cartItems.add(product);
-                                            ScaffoldMessenger.of(context).showSnackBar(
-                                              SnackBar(content: Text('${product['name']} added to cart!')),
+                                            cartCount.value = cartItems.length;
+
+                                            ScaffoldMessenger.of(
+                                              context,
+                                            ).showSnackBar(
+                                              SnackBar(
+                                                content: Text(
+                                                  '${product['name']} added to cart!',
+                                                ),
+                                              ),
                                             );
                                           },
                                         ),

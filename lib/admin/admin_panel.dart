@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hyphn/main_scafflod.dart';
 
 class AdminPanel extends StatefulWidget {
   const AdminPanel({super.key});
@@ -15,16 +16,8 @@ class _AdminPanelState extends State<AdminPanel> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Admin Panel"),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: _refreshOrders,
-          ),
-        ],
-      ),
+    return MainScaffold(
+     
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance.collection('orders').orderBy('timestamp', descending: true).snapshots(),
         builder: (context, snapshot) {

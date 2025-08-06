@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hyphn/main_scafflod.dart';
 import 'package:hyphn/pages/home.dart';
 
 class SignupPage extends StatefulWidget {
@@ -30,21 +31,28 @@ class _SignupPageState extends State<SignupPage> {
     }
 
     try {
+      // Create user in Firebase Auth
       UserCredential userCred = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
 
-      // Save user details in Firestore
+      // ✅ Set display name for FirebaseAuth user
+      await userCred.user!.updateDisplayName(name);
+      await userCred.user!.reload(); // Refresh the user
+      final updatedUser = FirebaseAuth.instance.currentUser;
+
+      // ✅ Save user info in Firestore
       await FirebaseFirestore.instance
           .collection('users')
-          .doc(userCred.user!.uid)
+          .doc(updatedUser!.uid)
           .set({
-        'uid': userCred.user!.uid,
+        'uid': updatedUser.uid,
         'name': name,
         'phone': phone,
         'email': email,
         'createdAt': Timestamp.now(),
       });
 
+      // Navigate to Home page
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const Home()),
@@ -58,8 +66,8 @@ class _SignupPageState extends State<SignupPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Sign Up")),
+    return MainScaffold(
+     
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: SingleChildScrollView(
@@ -84,7 +92,10 @@ class _SignupPageState extends State<SignupPage> {
                 decoration: const InputDecoration(labelText: "Password (min 6 chars)"),
               ),
               const SizedBox(height: 20),
-              ElevatedButton(onPressed: register, child: const Text("Sign Up")),
+              ElevatedButton(
+                onPressed: register,
+                child: const Text("Sign Up"),
+              ),
               TextButton(
                 onPressed: () {
                   Navigator.pop(context);

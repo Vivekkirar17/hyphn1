@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:hyphn/main_scafflod.dart';
 import 'package:hyphn/pages/home.dart';
 import 'package:hyphn/admin/admin_panel.dart'; // Make sure this exists
 import 'signup_page.dart';
@@ -25,7 +26,7 @@ class _LoginPageState extends State<LoginPage> {
       final user = userCredential.user;
 
       if (user != null && user.email == "admin@hyphn.com") {
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const AdminPanel()));
+        Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminPanel()));
       } else {
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const Home()));
       }
@@ -38,8 +39,8 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Login")),
+    return MainScaffold(
+   
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(

@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:hyphn/main_scafflod.dart';
 import 'global_variable.dart';
-import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-
-// If cartCount is not defined in global_variable.dart, define it here:
-
 
 class CheckoutPage extends StatefulWidget {
   const CheckoutPage({Key? key}) : super(key: key);
@@ -22,6 +19,27 @@ class _CheckoutPageState extends State<CheckoutPage> {
   final emailController = TextEditingController();
 
   bool isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserDetails();
+  }
+
+  Future<void> _loadUserDetails() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final doc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+      if (doc.exists) {
+        final data = doc.data();
+        setState(() {
+          nameController.text = data?['name'] ?? '';
+          phoneController.text = data?['phone'] ?? '';
+          emailController.text = data?['email'] ?? '';
+        });
+      }
+    }
+  }
 
   Future<void> submitOrder() async {
     if (!_formKey.currentState!.validate()) return;
@@ -58,8 +76,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Checkout")),
+    return MainScaffold(
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Form(
